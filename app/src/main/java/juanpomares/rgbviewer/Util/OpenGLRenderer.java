@@ -1,24 +1,20 @@
 package juanpomares.rgbviewer.Util;
 
-import static android.opengl.GLES10.GL_LIGHTING;
-import static android.opengl.GLES10.GL_SMOOTH;
-import static android.opengl.GLES10.glPointSize;
-import static android.opengl.GLES10.glPointSizex;
-import static android.opengl.GLES10.glShadeModel;
 import static android.opengl.GLES20.*;
 
-import static android.opengl.Matrix.frustumM;
 import static android.opengl.Matrix.multiplyMM;
 import static android.opengl.Matrix.orthoM;
 import static android.opengl.Matrix.rotateM;
 import static android.opengl.Matrix.scaleM;
 import static android.opengl.Matrix.setIdentityM;
+import static android.opengl.Matrix.translateM;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -45,8 +41,11 @@ public class OpenGLRenderer implements Renderer
         renderables=new ArrayList<Renderable3D>();
     }
 
-    public void setRX(float NewRX){rX=NewRX;}//Math.max(-90, Math.min(NewRX, 0));}
-    public void setRY(float NewRY){rY=NewRY;}//Math.max(0, Math.min(NewRY, 90));}
+    float Min(float a, float b){return a<b?a:b;}
+    float Max(float a, float b){return a>b?a:b;}
+
+    public void setRX(float NewRX)  { rX=Min(80f, Max(NewRX, 10f));  }
+    public void setRY(float NewRY)  { rY=Min(-10f, Max(NewRY, -80f));}
     public float getRX(){return rX;}
     public float getRY(){return rY;}
 
@@ -106,8 +105,12 @@ public class OpenGLRenderer implements Renderer
         /////glClear(GL_COLOR_BUFFER_BIT);
 
 
+        Renderable3D renderable;
         for(int i=0, length=renderables.size(); i<length; i++)
-            renderables.get(i).draw(MVP, modelMatrix);
+        {
+            renderable=renderables.get(i);
+            renderable.draw(MVP, modelMatrix);
+        }
     }
 
     public void handleTouchDrag(float normalizedX, float normalizedY)
@@ -115,10 +118,14 @@ public class OpenGLRenderer implements Renderer
         setRX(rX-normalizedY*180f);
         setRY(rY+normalizedX*180f);
 
+
+        //Log.d("rX rY", rX+" "+rY);
+
         setIdentityM(modelMatrix, 0);
-        scaleM(modelMatrix, 0, 0.5f, 0.5f, 0.5f);
         rotateM(modelMatrix, 0, rX, 1f, 0f, 0f);
         rotateM(modelMatrix, 0, rY, 0f, 1f, 0f);
+        scaleM(modelMatrix, 0, 0.65f, 0.65f, 0.65f);
+        translateM(modelMatrix, 0, -0.5f, -0.5f, -0.5f);
 
         multiplyMM(MVP, 0, projectionMatrix, 0, modelMatrix, 0);
     }

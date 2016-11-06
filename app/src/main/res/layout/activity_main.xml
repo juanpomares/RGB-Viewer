@@ -36,7 +36,7 @@
             android:text="0"
             android:id="@+id/valueR"
             android:paddingRight="5dp"
-            android:layout_weight="2" />
+            android:layout_weight="3" />
 
     </LinearLayout>
 
@@ -66,10 +66,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="255"
+            android:text="0"
             android:id="@+id/valueG"
             android:paddingRight="5dp"
-            android:layout_weight="2" />
+            android:layout_weight="3" />
 
     </LinearLayout>
 
@@ -102,7 +102,7 @@
             android:text="0"
             android:id="@+id/valueB"
             android:paddingRight="5dp"
-            android:layout_weight="2" />
+            android:layout_weight="3" />
 
     </LinearLayout>
 

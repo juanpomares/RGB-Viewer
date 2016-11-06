@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         aux.add(0, new Point3D(ValueR/255f, ValueG/255f, ValueB/255f, new Color(ValueR, ValueG, ValueB)));
 
 
-        renderer.AddRenderable(myPoint=new Renderable3D(GL_POINTS, aux));
+        renderer.AddRenderable(myPoint=new Renderable3D(GL_POINTS, aux, 10));
 
        /* aux.add(auxInt++, crearRGBPointColor(0, 0, 1, 1));
         aux.add(auxInt++, crearRGBPointColor(0, 1, 1, 1));
