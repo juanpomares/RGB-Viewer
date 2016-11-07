@@ -14,7 +14,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -34,7 +33,6 @@ public class OpenGLRenderer implements Renderer
 
     private ArrayList<Renderable3D> renderables;
 
-
     public OpenGLRenderer(Context context)
     {
         this.context = context;
@@ -44,8 +42,9 @@ public class OpenGLRenderer implements Renderer
     float Min(float a, float b){return a<b?a:b;}
     float Max(float a, float b){return a>b?a:b;}
 
-    public void setRX(float NewRX)  { rX=Min(80f, Max(NewRX, 10f));  }
-    public void setRY(float NewRY)  { rY=Min(-10f, Max(NewRY, -80f));}
+    public void setRX(float NewRX)  { rX=Min(80f, Max(NewRX, 5f));  }
+    public void setRY(float NewRY)  { rY=Min(-5f, Max(NewRY, -85f));}
+
     public float getRX(){return rX;}
     public float getRY(){return rY;}
 
@@ -60,8 +59,10 @@ public class OpenGLRenderer implements Renderer
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config)
     {
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
+        glLineWidth(5);
         for(int i=0, length=renderables.size(); i<length; i++)
             renderables.get(i).onSurfaceCreated(context);
 
@@ -79,13 +80,9 @@ public class OpenGLRenderer implements Renderer
                 (float) height / (float) width;
 
         if (width > height)
-        {
             orthoM(projectionMatrix, 0, -aspectRatio*TAM, aspectRatio*TAM, -TAM, TAM, -10.0f, 10.0f);
-            //frustumM(projectionMatrix, 0, -aspectRatio*TAM, aspectRatio*TAM, -TAM, TAM, 0.1f, 100.0f);
-        } else {
+         else
             orthoM(projectionMatrix, 0, -TAM, TAM, -aspectRatio*TAM, aspectRatio*TAM, -10.0f, 10.0f);
-            //frustumM(projectionMatrix, 0, -TAM, TAM, -aspectRatio*TAM, aspectRatio*TAM, 0.1f, 100.0f);
-        }
 
         multiplyMM(MVP, 0, projectionMatrix, 0, modelMatrix, 0);
     }
@@ -104,22 +101,15 @@ public class OpenGLRenderer implements Renderer
         // Clear the rendering surface.
         /////glClear(GL_COLOR_BUFFER_BIT);
 
-
-        Renderable3D renderable;
         for(int i=0, length=renderables.size(); i<length; i++)
-        {
-            renderable=renderables.get(i);
-            renderable.draw(MVP, modelMatrix);
-        }
+            renderables.get(i).draw(MVP, modelMatrix);
+
     }
 
     public void handleTouchDrag(float normalizedX, float normalizedY)
     {
-        setRX(rX-normalizedY*180f);
-        setRY(rY+normalizedX*180f);
-
-
-        //Log.d("rX rY", rX+" "+rY);
+        setRX(rX-normalizedY*45f);
+        setRY(rY+normalizedX*45f);
 
         setIdentityM(modelMatrix, 0);
         rotateM(modelMatrix, 0, rX, 1f, 0f, 0f);

@@ -38,7 +38,6 @@ public class Renderable3D
 
     private int mVertexCount;
     private float[] mVertexArray;
-    private LinkedList<Point3D> mVertexList;
 
     private int aPositionLocation;
     private int aColorLocation;
@@ -68,20 +67,20 @@ public class Renderable3D
 
     public void createLists(LinkedList<Point3D> _list)
     {
-            mVertexList = _list;
             if (mVertexArray != null)
                 mVertexArray = null;
 
-            mVertexCount = mVertexList.size();
-            mVertexArray = new float[(mVertexCount = this.mVertexList.size()) * (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT)];
+            mVertexCount = _list.size();
+            mVertexArray = new float[mVertexCount  * (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT)];
 
             int desplazamiento = 0;
 
             Point3D actual;
             Color color;
 
-            for (int i = 0; i < mVertexCount; i++) {
-                actual = mVertexList.get(i);
+            for (int i = 0; i < mVertexCount; i++)
+            {
+                actual = _list.get(i);
 
                 mVertexArray[desplazamiento++] = actual.getX();
                 mVertexArray[desplazamiento++] = actual.getY();
@@ -96,16 +95,23 @@ public class Renderable3D
 
             if (vertexData != null)
             {
-                vertexData.clear();
-                vertexData = null;
+                synchronized (vertexData)
+                {
+                    vertexData.clear();
+                    vertexData = null;
+                }
             }
 
             vertexData = ByteBuffer
                     .allocateDirect(mVertexArray.length * BYTES_PER_FLOAT)
                     .order(ByteOrder.nativeOrder())
                     .asFloatBuffer();
-            vertexData.clear();
-            vertexData.put(mVertexArray);
+
+            synchronized (vertexData)
+            {
+                vertexData.clear();
+                vertexData.put(mVertexArray);
+            }
     }
 
 
@@ -144,15 +150,21 @@ public class Renderable3D
     {
         if (vertexData!=null)
         {
-            // Asociando vértices con su attribute
-            vertexData.position(0);
-            glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
+            synchronized (vertexData)
+            {
+                // Asociando vértices con su attribute
+                vertexData.position(0);
+                glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
+            }
         }
 
         if (vertexData!=null)
         {
-            vertexData.position(POSITION_COMPONENT_COUNT);
-            glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
+            synchronized (vertexData)
+            {
+                vertexData.position(POSITION_COMPONENT_COUNT);
+                glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
+            }
         }
     }
 
