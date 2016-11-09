@@ -3,6 +3,7 @@ package juanpomares.rgbviewer;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         startListenerSeekBars();
         startOpenGLView();
@@ -122,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
     private SeekBar.OnSeekBarChangeListener changelistener=new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {changedSeekbar(seekBar); }
@@ -166,8 +164,13 @@ public class MainActivity extends AppCompatActivity {
 
         if(tv!=null)
         {
-            m3DObjects.changeValues(mValueR/255f, mValueG/255f, mValueB/255f);
             tv.setText(progress+"");
+            mGLSurfaceView.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    m3DObjects.changeValues(mValueR/255f, mValueG/255f, mValueB/255f);
+                }
+            });
         }
     }
 

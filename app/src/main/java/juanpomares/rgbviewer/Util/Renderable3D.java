@@ -1,26 +1,16 @@
 package juanpomares.rgbviewer.Util;
 
-import android.content.Context;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
-import juanpomares.rgbviewer.R;
 
 import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
-import static android.opengl.GLES20.GL_SRC_ALPHA;
-import static android.opengl.GLES20.glBlendFunc;
 import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glGetAttribLocation;
-import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform1f;
-import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUniformMatrix4fv;
-import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 
 
@@ -44,12 +34,6 @@ public class Renderable3D
     private int uSizeLocation;
     private int uMVPMatrixLocation;
 
-    private static final String U_MVPMATRIX = "u_MVPMatrix";
-    private static final String A_POSITION  = "a_Position";
-    private static final String U_SIZE      = "u_Size";
-    private static final String A_COLOR     = "a_Color";
-
-    private int program;
     private int Pointsize=-1;
 
     public Renderable3D(int _type, LinkedList<Point3D> _list, int _pointSize)
@@ -115,35 +99,12 @@ public class Renderable3D
     }
 
 
-    public void onSurfaceCreated(Context context)
+    public void onSurfaceCreated(int _positionLocation, int _colorLocation, int _sizeLocation, int _MVPMatrixLocation)
     {
-        String vertexShaderSource="", fragmentShaderSource="";
-
-        vertexShaderSource=TextResourceReader.readTextFileFromResource(context, R.raw.simple_vertex_shader);
-        fragmentShaderSource=TextResourceReader.readTextFileFromResource(context, R.raw.simple_fragment_shader);
-
-        // Compilamos los shaders
-        int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource);
-        int fragmentShader = ShaderHelper.compileFragmentShader(fragmentShaderSource);
-
-        program = ShaderHelper.linkProgram(vertexShader, fragmentShader);
-
-        // En depuración validamos el programa OpenGL
-        /*if (LoggerConfig.ON) {*/	ShaderHelper.validateProgram(program);	//}
-
-        // Activamos el programa OpenGL
-        glUseProgram(program);
-
-        uMVPMatrixLocation = glGetUniformLocation(program, U_MVPMATRIX);
-        uSizeLocation = glGetUniformLocation(program, U_SIZE);
-        aPositionLocation = glGetAttribLocation(program, A_POSITION);
-        aColorLocation =    glGetAttribLocation(program, A_COLOR);
-
-
-        glEnableVertexAttribArray(aPositionLocation);
-        glEnableVertexAttribArray(aColorLocation);
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        aPositionLocation=_positionLocation;
+        aColorLocation=_colorLocation;
+        uSizeLocation=_sizeLocation;
+        uMVPMatrixLocation=_MVPMatrixLocation;
     }
 
     private void loadBufferShader()
@@ -174,7 +135,6 @@ public class Renderable3D
         if (vertexData == null)
             return;
 
-        glUseProgram(program);
         loadBufferShader();
 
 

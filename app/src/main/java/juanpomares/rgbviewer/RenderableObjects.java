@@ -10,6 +10,7 @@ import juanpomares.rgbviewer.Util.Renderable3D;
 import static android.opengl.GLES20.GL_LINES;
 import static android.opengl.GLES20.GL_POINTS;
 import static android.opengl.GLES20.GL_TRIANGLE_FAN;
+import static android.opengl.GLES20.glClearColor;
 
 /**
  * Created by Usuario on 05/11/2016.
@@ -21,11 +22,12 @@ public class RenderableObjects
     private float mValueR=0, mValueG=0, mValueB=0;
 
     private Renderable3D mColoredCube;
-    private Renderable3D mPoint;
-    private Renderable3D mBorderPoint;
-    private Renderable3D mLines;
-    private Renderable3D mPointsLines;
+    private Renderable3D mPoint, mBorderPoint;
+    private Renderable3D mLines, mPointsLines;
+    private Renderable3D mPlaneR, mPlaneG, mPlaneB;
     private LinkedList<Point3D> mLinkedList;
+    
+    private final static float AlphaPlanes =0.5f, AlphaCube =1f;
 
     public RenderableObjects(OpenGLRenderer _renderer)
     {
@@ -38,14 +40,14 @@ public class RenderableObjects
     {
         /*Creating cube*/
         mLinkedList.clear();
-        mLinkedList.addLast(createRGBPointColor(0, 0, 0, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(0, 0, 1, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(0, 1, 1, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(0, 1, 0, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(1, 1, 0, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(1, 0, 0, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(1, 0, 1, 0.75f));
-        mLinkedList.addLast(createRGBPointColor(0, 0, 1, 0.75f));
+        mLinkedList.addLast(createRGBPointColor(0, 0, 0, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(0, 0, 1, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(0, 1, 1, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(0, 1, 0, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(1, 1, 0, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(1, 0, 0, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(1, 0, 1, AlphaCube));
+        mLinkedList.addLast(createRGBPointColor(0, 0, 1, AlphaCube));
 
         mRenderer.AddRenderable(mColoredCube=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
 
@@ -63,6 +65,18 @@ public class RenderableObjects
         mRenderer.AddRenderable(mPointsLines=new Renderable3D(GL_POINTS, mLinkedList, 10));
 
 
+
+        fillLinkedListPlaneR();
+        mRenderer.AddRenderable(mPlaneR=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+
+
+        fillLinkedListPlaneG();
+        mRenderer.AddRenderable(mPlaneG=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+
+        fillLinkedListPlaneB();
+        mRenderer.AddRenderable(mPlaneB=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+
+
     }
 
     private void fillLinkedListMainPoint()
@@ -75,6 +89,39 @@ public class RenderableObjects
     {
         mLinkedList.clear();
         mLinkedList.addLast(createInverseRGBPointColor(mValueR, mValueG, mValueB, 1));
+    }
+
+    private void fillLinkedListPlaneR()
+    {
+        mLinkedList.clear();
+        mLinkedList.addLast(createRGBPointColor(mValueR, mValueG, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, mValueG, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, mValueG, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(1, mValueG, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(1, mValueG, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, mValueG, 1, AlphaPlanes));
+    }
+
+    private void fillLinkedListPlaneG()
+    {
+        mLinkedList.clear();
+        mLinkedList.addLast(createRGBPointColor(mValueR, mValueG, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 0, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 0, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 1, AlphaPlanes));
+    }
+
+    private void fillLinkedListPlaneB()
+    {
+        mLinkedList.clear();
+        mLinkedList.addLast(createRGBPointColor(mValueR, mValueG, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, 1, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(1, 1, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(1, 0, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, 0, mValueB, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, 1, mValueB, AlphaPlanes));
     }
 
     private void fillLinkedListLines()
@@ -97,6 +144,7 @@ public class RenderableObjects
     {
         mValueR=newR; mValueG=newG; mValueB=newB;
 
+        glClearColor(mValueR, mValueG, mValueB, 1);
 
         fillLinkedListMainPoint();
         mPoint.createLists(mLinkedList);
@@ -108,5 +156,32 @@ public class RenderableObjects
         mLines.createLists(mLinkedList);
         mPointsLines.createLists(mLinkedList);
 
+        fillLinkedListPlaneR();
+        mPlaneR.createLists(mLinkedList);
+
+        fillLinkedListPlaneG();
+        mPlaneG.createLists(mLinkedList);
+
+        fillLinkedListPlaneB();
+        mPlaneB.createLists(mLinkedList);
+    }
+
+    public void changeState(boolean _remove, int _plane)
+    {
+        Renderable3D ChangedPlane=null;
+        switch (_plane)
+        {
+            case 0: ChangedPlane=this.mPlaneR; break;
+            case 1: ChangedPlane=this.mPlaneR; break;
+            case 2: ChangedPlane=this.mPlaneR; break;
+        }
+
+        if(ChangedPlane!=null)
+        {
+            if(_remove)
+                mRenderer.RemoveRenderable(ChangedPlane);
+            else
+                mRenderer.AddRenderable(ChangedPlane);
+        }
     }
 }

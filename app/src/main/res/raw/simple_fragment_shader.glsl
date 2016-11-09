@@ -1,7 +1,7 @@
 precision mediump float;
-varying vec4 v_Color;				// in: color recibido desde el vertex shader
+varying vec4 v_Color;
 
 void main()
 {
-	gl_FragColor = v_Color;
+    gl_FragColor = v_Color;
 }

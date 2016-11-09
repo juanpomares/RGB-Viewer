@@ -54,8 +54,8 @@ public class ShaderHelper {
 
         //if (LoggerConfig.ON) {
             // Print the shader info log to the Android log output.
-            Log.v(TAG, "Result of the code compiling:" + "\n" + shaderCode + "\n:"
-                    + glGetShaderInfoLog(shaderObjectId));
+            /*Log.v(TAG, "Result of the code compiling:" + "\n" + shaderCode + "\n:"
+                    + glGetShaderInfoLog(shaderObjectId));*/
         //}
         if (compileStatus[0] == 0) {
             // If fails, delete the shader object
@@ -87,8 +87,8 @@ public class ShaderHelper {
         glGetProgramiv(programObjectId, GL_LINK_STATUS, linkStatus, 0);
 
         //if (LoggerConfig.ON) {
-            Log.v(TAG, "Linking program result: :\n"
-                    + glGetProgramInfoLog(programObjectId));
+            /*Log.v(TAG, "Linking program result: :\n"
+                    + glGetProgramInfoLog(programObjectId));*/
         //}
         // Checking linking rseult
         if (linkStatus[0] == 0) {

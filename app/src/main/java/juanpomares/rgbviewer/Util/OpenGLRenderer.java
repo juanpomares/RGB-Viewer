@@ -16,6 +16,9 @@ import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import juanpomares.rgbviewer.R;
 
 
 public class OpenGLRenderer implements Renderer
@@ -33,6 +36,19 @@ public class OpenGLRenderer implements Renderer
 
     private ArrayList<Renderable3D> renderables;
 
+    private int aPositionLocation;
+    private int aColorLocation;
+    private int uSizeLocation;
+    private int uMVPMatrixLocation;
+
+    private static final String U_MVPMATRIX = "u_MVPMatrix";
+    private static final String A_POSITION  = "a_Position";
+    private static final String U_SIZE      = "u_Size";
+    private static final String A_COLOR     = "a_Color";
+
+    private int program;
+
+
     public OpenGLRenderer(Context context)
     {
         this.context = context;
@@ -42,7 +58,7 @@ public class OpenGLRenderer implements Renderer
     float Min(float a, float b){return a<b?a:b;}
     float Max(float a, float b){return a>b?a:b;}
 
-    public void setRX(float NewRX)  { rX=Min(80f, Max(NewRX, 5f));  }
+    public void setRX(float NewRX)  { rX=Min(85f, Max(NewRX, 5f));  }
     public void setRY(float NewRY)  { rY=Min(-5f, Max(NewRY, -85f));}
 
     public float getRX(){return rX;}
@@ -52,22 +68,58 @@ public class OpenGLRenderer implements Renderer
     {
         renderables.add(_renderable);
         if(SurfaceCreated)
-            _renderable.onSurfaceCreated(context);
+            _renderable.onSurfaceCreated(aPositionLocation, aColorLocation, uSizeLocation, uMVPMatrixLocation);
     }
+
+    public void RemoveRenderable(Renderable3D _renderable)
+    {
+        renderables.remove(_renderable);
+    }
+
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config)
     {
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        String vertexShaderSource=TextResourceReader.readTextFileFromResource(context, R.raw.simple_vertex_shader);
+        String fragmentShaderSource=TextResourceReader.readTextFileFromResource(context, R.raw.simple_fragment_shader);
 
+        // Compilamos los shaders
+        int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource);
+        int fragmentShader = ShaderHelper.compileFragmentShader(fragmentShaderSource);
+
+        program = ShaderHelper.linkProgram(vertexShader, fragmentShader);
+
+        // En depuración validamos el programa OpenGL
+        /*if (LoggerConfig.ON) {*/	ShaderHelper.validateProgram(program);	//}
+
+        glUseProgram(program);
+
+        uMVPMatrixLocation  = glGetUniformLocation(program, U_MVPMATRIX);
+        uSizeLocation       = glGetUniformLocation(program, U_SIZE);
+        aPositionLocation   = glGetAttribLocation(program, A_POSITION);
+        aColorLocation      = glGetAttribLocation(program, A_COLOR);
+
+
+
+        glEnableVertexAttribArray(aPositionLocation);
+        glEnableVertexAttribArray(aColorLocation);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glLineWidth(5);
-        for(int i=0, length=renderables.size(); i<length; i++)
-            renderables.get(i).onSurfaceCreated(context);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         handleTouchDrag(0, 0);
         SurfaceCreated=true;
+
+
+        Iterator<Renderable3D> rend_it= renderables.iterator();
+        while(rend_it.hasNext())
+            rend_it.next().onSurfaceCreated(aPositionLocation, aColorLocation, uSizeLocation, uMVPMatrixLocation);
+
+        /* for(int i=0, length=renderables.size(); i<length; i++)
+            renderables.get(i).onSurfaceCreated(aPositionLocation, aColorLocation, uSizeLocation, uMVPMatrixLocation);*/
     }
 
     @Override
@@ -79,10 +131,8 @@ public class OpenGLRenderer implements Renderer
                 (float) width / (float) height :
                 (float) height / (float) width;
 
-        if (width > height)
-            orthoM(projectionMatrix, 0, -aspectRatio*TAM, aspectRatio*TAM, -TAM, TAM, -10.0f, 10.0f);
-         else
-            orthoM(projectionMatrix, 0, -TAM, TAM, -aspectRatio*TAM, aspectRatio*TAM, -10.0f, 10.0f);
+        if (width > height) orthoM(projectionMatrix, 0, -aspectRatio*TAM, aspectRatio*TAM, -TAM, TAM, -10.0f, 10.0f);
+        else orthoM(projectionMatrix, 0, -TAM, TAM, -aspectRatio*TAM, aspectRatio*TAM, -10.0f, 10.0f);
 
         multiplyMM(MVP, 0, projectionMatrix, 0, modelMatrix, 0);
     }
@@ -92,18 +142,13 @@ public class OpenGLRenderer implements Renderer
     {
         // Clear the rendering surface.
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_CULL_FACE);
-        //glEnable(GL_DITHER);
-        //	glLineWidth(2.0f);
 
+        Iterator<Renderable3D> rend_it=renderables.iterator();
+        while(rend_it.hasNext())
+            rend_it.next().draw(MVP, modelMatrix);
 
-        // Clear the rendering surface.
-        /////glClear(GL_COLOR_BUFFER_BIT);
-
-        for(int i=0, length=renderables.size(); i<length; i++)
-            renderables.get(i).draw(MVP, modelMatrix);
-
+         /*for(int i=0, length=renderables.size(); i<length; i++)
+            renderables.get(i).draw(MVP, modelMatrix);*/
     }
 
     public void handleTouchDrag(float normalizedX, float normalizedY)
