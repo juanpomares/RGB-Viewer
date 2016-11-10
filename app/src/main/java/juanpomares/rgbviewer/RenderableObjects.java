@@ -27,7 +27,7 @@ public class RenderableObjects
     private Renderable3D mPlaneR, mPlaneG, mPlaneB;
     private LinkedList<Point3D> mLinkedList;
     
-    private final static float AlphaPlanes =0.5f, AlphaCube =1f;
+    private final static float AlphaPlanes =0.75f, AlphaCube =1f;
 
     public RenderableObjects(OpenGLRenderer _renderer)
     {
@@ -67,14 +67,16 @@ public class RenderableObjects
 
 
         fillLinkedListPlaneR();
-        mRenderer.AddRenderable(mPlaneR=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
-
+        //mRenderer.AddRenderable(mPlaneR=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+        mPlaneR=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList);
 
         fillLinkedListPlaneG();
-        mRenderer.AddRenderable(mPlaneG=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+        //mRenderer.AddRenderable(mPlaneG=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+        mPlaneG=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList);
 
         fillLinkedListPlaneB();
-        mRenderer.AddRenderable(mPlaneB=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+        //mRenderer.AddRenderable(mPlaneB=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList));
+        mPlaneB=new Renderable3D(GL_TRIANGLE_FAN, mLinkedList);
 
 
     }
@@ -166,22 +168,22 @@ public class RenderableObjects
         mPlaneB.createLists(mLinkedList);
     }
 
-    public void changeState(boolean _remove, int _plane)
+    public void changeState(boolean _add, int _plane)
     {
         Renderable3D ChangedPlane=null;
         switch (_plane)
         {
             case 0: ChangedPlane=this.mPlaneR; break;
-            case 1: ChangedPlane=this.mPlaneR; break;
-            case 2: ChangedPlane=this.mPlaneR; break;
+            case 1: ChangedPlane=this.mPlaneG; break;
+            case 2: ChangedPlane=this.mPlaneB; break;
         }
 
         if(ChangedPlane!=null)
         {
-            if(_remove)
-                mRenderer.RemoveRenderable(ChangedPlane);
-            else
+            if(_add)
                 mRenderer.AddRenderable(ChangedPlane);
+            else
+                mRenderer.RemoveRenderable(ChangedPlane);
         }
     }
 }

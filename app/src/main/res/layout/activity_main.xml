@@ -137,20 +137,23 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="XY"
-                android:id="@+id/CBXY" />
+                android:text="R"
+                android:id="@+id/CBR"
+                android:checked="false"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="XZ"
-                android:id="@+id/CBXZ" />
+                android:text="G"
+                android:id="@+id/CBG"
+                android:checked="false" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ZY"
-                android:id="@+id/CBZY" />
+                android:text="B"
+                android:id="@+id/CBB"
+                android:checked="false" />
         </LinearLayout>
 
     </LinearLayout>
