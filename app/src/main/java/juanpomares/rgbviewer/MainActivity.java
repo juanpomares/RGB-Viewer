@@ -3,13 +3,14 @@ package juanpomares.rgbviewer;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
-import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +34,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startListenerSeekBars();
         startOpenGLView();
-
         m3DObjects=new RenderableObjects(mGLRenderer);
+
+        startListenerSeekBars();
+        startListenersCheckbox();
     }
 
     private void startListenerSeekBars()
@@ -46,6 +48,21 @@ public class MainActivity extends AppCompatActivity {
             SeekBar sb=(SeekBar) findViewById(getSBId(i));
             if(sb!=null)
                 sb.setOnSeekBarChangeListener(changelistener);
+        }
+    }
+
+    private void startListenersCheckbox()
+    {
+        boolean VisibilityPlanes=false;
+        for(int i=0; i<3; i++)
+        {
+            CheckBox cb=(CheckBox) findViewById(getCBId(i));
+            if(cb!=null)
+            {
+                cb.setChecked(VisibilityPlanes);
+                m3DObjects.changeState(VisibilityPlanes, i);
+                cb.setOnCheckedChangeListener(mCheckedChanged);
+            }
         }
     }
 
@@ -122,6 +139,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    CompoundButton.OnCheckedChangeListener mCheckedChanged=new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(final CompoundButton compoundButton, final boolean b)
+        {
+            mGLSurfaceView.queueEvent(new Runnable()
+            {
+                @Override
+                public void run() { m3DObjects.changeState(b, getNumByCBId(compoundButton.getId())); }
+            });
+        }
+    };
+
     private SeekBar.OnSeekBarChangeListener changelistener=new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {changedSeekbar(seekBar); }
@@ -136,35 +165,24 @@ public class MainActivity extends AppCompatActivity {
     private void changedSeekbar(SeekBar seekbar)
     {
         int progress=Math.min(seekbar.getProgress(), 255);
-        TextView tv=null;
+        int TextViewId=-1;
+
         switch (seekbar.getId())
         {
             case R.id.SBR:
-                if(progress!= mValueR)
-                {
-                    tv=(TextView) findViewById(R.id.valueR);
-                    mValueR =progress;
-                }
+                if(progress!= mValueR) { TextViewId=R.id.valueR;  mValueR =progress; }
                 break;
             case R.id.SBG:
-                if(progress!= mValueR)
-                {
-                    tv=(TextView) findViewById(R.id.valueG);
-                    mValueG =progress;
-                }
+                if(progress!= mValueR) { TextViewId=R.id.valueG; mValueG =progress; }
                 break;
             case R.id.SBB:
-                if(progress!= mValueR)
-                {
-                    tv=(TextView) findViewById(R.id.valueB);
-                    mValueB =progress;
-                }
+                if(progress!= mValueR) { TextViewId=R.id.valueB; mValueB =progress; }
                 break;
         }
 
-        if(tv!=null)
+        if(TextViewId!=-1)
         {
-            tv.setText(progress+"");
+            ((TextView) findViewById(TextViewId)).setText(progress+"");
             mGLSurfaceView.queueEvent(new Runnable() {
                 @Override
                 public void run() {
@@ -178,9 +196,29 @@ public class MainActivity extends AppCompatActivity {
     {
         switch (num)
         {
-            case 0: return R.id.SBR;
-            case 1: return R.id.SBG;
-            default: return R.id.SBB;
+            case 0:     return R.id.SBR;
+            case 1:     return R.id.SBG;
+            default:    return R.id.SBB;
+        }
+    }
+
+    private int getCBId(int num)
+    {
+        switch (num)
+        {
+            case 0:     return R.id.CBR;
+            case 1:     return R.id.CBG;
+            default:    return R.id.CBB;
+        }
+    }
+
+    private int getNumByCBId(int num)
+    {
+        switch (num)
+        {
+            case R.id.CBR:      return 0;
+            case R.id.CBG:      return 1;
+            default:            return 2;
         }
     }
 
