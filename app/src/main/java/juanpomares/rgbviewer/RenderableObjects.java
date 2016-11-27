@@ -97,22 +97,22 @@ public class RenderableObjects
     {
         mLinkedList.clear();
         mLinkedList.addLast(createRGBPointColor(mValueR, mValueG, mValueB, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(0, mValueG, 1, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(0, mValueG, 0, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(1, mValueG, 0, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(1, mValueG, 1, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(0, mValueG, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 0, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 0, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 1, AlphaPlanes));
     }
 
     private void fillLinkedListPlaneG()
     {
         mLinkedList.clear();
         mLinkedList.addLast(createRGBPointColor(mValueR, mValueG, mValueB, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 1, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 0, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(mValueR, 0, 0, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(mValueR, 0, 1, AlphaPlanes));
-        mLinkedList.addLast(createRGBPointColor(mValueR, 1, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, mValueG, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, mValueG, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(1, mValueG, 0, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(1, mValueG, 1, AlphaPlanes));
+        mLinkedList.addLast(createRGBPointColor(0, mValueG, 1, AlphaPlanes));
     }
 
     private void fillLinkedListPlaneB()
