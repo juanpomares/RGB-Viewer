@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "juanpomares.rgbviewer"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 1
+        versionCode 3
         versionName "1.0"
     }
     buildTypes {

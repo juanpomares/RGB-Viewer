@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RGB-Viewer.iml" filepath="$PROJECT_DIR$/RGB-Viewer.iml" />
+      <module fileurl="file://C:\Users\Juanpomares\Documents\GitHub\RGB-Viewer\RGB-Viewer.iml" filepath="C:\Users\Juanpomares\Documents\GitHub\RGB-Viewer\RGB-Viewer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Juanpomares\Documents\GitHub\RGB-Viewer\app\app.iml" filepath="C:\Users\Juanpomares\Documents\GitHub\RGB-Viewer\app\app.iml" />
     </modules>
   </component>
 </project>
